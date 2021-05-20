@@ -49,7 +49,7 @@ class LscorpForm extends FormBase {
         'wrapper' => 'lscorp',
         'progress' => [
           'type' => 'throbber',
-          'message' => $this->t('Adding a row...'),
+          'message' => $this->t('Sending...'),
         ],
       ],
     ];
@@ -79,6 +79,7 @@ class LscorpForm extends FormBase {
       '#attributes' => [
         'id' => 'lscorp',
       ],
+      '#tree' => TRUE,
     ];
     $count = $form_state->get('count');
     if (empty($count)) {
@@ -90,20 +91,23 @@ class LscorpForm extends FormBase {
       foreach ($row_names as $cell) {
         if ($cell == 'year') {
           $form['table'][$i][$cell] = [
-            '#name' => $cell,
+            '#title' => $cell,
             '#plain_text' => $date,
+            '#title_display' => 'invisible',
           ];
         }
         elseif (($cell == 'q1')||($cell == 'q2')||($cell == 'q3')||($cell == 'q4')||($cell == 'ytd')) {
           $form['table'][$i][$cell] = [
-            '#name' => $cell,
+            '#title' => $cell,
             '#plain_text' => '',
+            '#title_display' => 'invisible',
           ];
         }
         else {
           $form['table'][$i][$cell] = [
             '#type' => 'textfield',
-            '#name' => $cell,
+            '#title' => $cell,
+            '#title_display' => 'invisible',
           ];
         }
       }
@@ -116,10 +120,6 @@ class LscorpForm extends FormBase {
    */
   public function addRowCallback(array &$form, FormStateInterface $form_state) {
     $count = $form_state->get('count');
-//    if (empty($count)) {
-//      $count = 1;
-//      $form_state->set('count', 1);
-//    }
     $count++;
     $form_state->set('count', $count);
     $values = $form_state->getValues();
@@ -137,17 +137,14 @@ class LscorpForm extends FormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-//    if (strlen($form_state->getValue('phone_number')) < 3) {
-//      $form_state->setErrorByName('phone_number', $this->t('The phone number is too short. Please enter a full phone number'));
-//    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $values = $form_state->getValues();
-    echo('no');
+    $values = $form_state->getValue('table');
+    \Drupal::messenger()->addStatus('Hello, darkness, my old friend...');
   }
 
 }
