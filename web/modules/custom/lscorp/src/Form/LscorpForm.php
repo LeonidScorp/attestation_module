@@ -77,13 +77,13 @@ class LscorpForm extends FormBase {
         'YTD',
       ],
       '#attributes' => [
-        '#id' => 'lscorp',
+        'id' => 'lscorp',
       ],
     ];
-    $count = $form_state->getValue('count');
+    $count = $form_state->get('count');
     if (empty($count)) {
       $count = 1;
-      $form_state->setValue('count', 1);
+      $form_state->set('count', 1);
     }
     for ($i = 0; $i < $count; $i++) {
       $date = strval(intval(date('Y') - ($count - $i) + 1));
@@ -115,13 +115,13 @@ class LscorpForm extends FormBase {
    * Adds row to table.
    */
   public function addRowCallback(array &$form, FormStateInterface $form_state) {
-    $count = $form_state->getValue('count');
-    if (empty($count)) {
-      $count = 1;
-      $form_state->setValue('count', 1);
-    }
+    $count = $form_state->get('count');
+//    if (empty($count)) {
+//      $count = 1;
+//      $form_state->set('count', 1);
+//    }
     $count++;
-    $form_state->setValue('count', $count);
+    $form_state->set('count', $count);
     $values = $form_state->getValues();
     $form_state->setRebuild();
   }
