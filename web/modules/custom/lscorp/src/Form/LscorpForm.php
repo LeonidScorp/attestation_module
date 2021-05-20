@@ -21,10 +21,12 @@ class LscorpForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state):array {
-    $form['#type'] = 'actions';
+    $row_names = ['year', 'jan', 'feb', 'mar', 'q1', 'arp', 'may', 'jun', 'q2', 'jul', 'aug',
+      'sep', 'q3', 'oct', 'nov', 'dec', 'q4', 'ytd',
+    ];
     $form['addRow'] = [
       '#type' => 'submit',
-      '#value' => $this->t('Add row'),
+      '#value' => 'Add Row',
       '#submit' => ['::addRowCallback'],
       '#ajax' => [
         'callback' => '::formReturn',
@@ -33,14 +35,13 @@ class LscorpForm extends FormBase {
         'wrapper' => 'lscorp',
         'progress' => [
           'type' => 'throbber',
-          'message' => $this->t('Adding row...'),
+          'message' => $this->t('Adding a row...'),
         ],
       ],
     ];
     $form['submit'] = [
       '#type' => 'submit',
-      '#value' => $this->t('Save'),
-      '#button_type' => 'primary',
+      '#value' => 'Send',
       '#ajax' => [
         'callback' => '::formReturn',
         'disable-refocus' => FALSE,
@@ -48,47 +49,62 @@ class LscorpForm extends FormBase {
         'wrapper' => 'lscorp',
         'progress' => [
           'type' => 'throbber',
-          'message' => $this->t('Submitting...'),
+          'message' => $this->t('Adding a row...'),
         ],
       ],
     ];
-    $rowsCount = $form_state->get('rowsCount');
-    if (empty($rowsCount)) {
-      $rowsCount = 1;
-      $form_state->set('rowsCount', 1);
-    }
     $form['table'] = [
-      '#attributes' => [
-        'id' => 'lscorp',
-      ],
+      '#title' => 'LScorp Table',
       '#type' => 'table',
-      '#caption' => $this->t('Test table'),
       '#header' => [
-        $this->t('Year'),
-        $this->t('Jan'),
-        $this->t('Feb'),
-        $this->t('Mar'),
-        $this->t('Q1'),
-        $this->t('Apr'),
-        $this->t('May'),
-        $this->t('Jun'),
-        $this->t('Q2'),
-        $this->t('Jul'),
-        $this->t('Aug'),
-        $this->t('Sep'),
-        $this->t('Q3'),
-        $this->t('Oct'),
-        $this->t('Nov'),
-        $this->t('Dec'),
-        $this->t('Q4'),
-        $this->t('YTD'),
+        'Year',
+        'Jan',
+        'Feb',
+        'Mar',
+        'Q1',
+        'Apr',
+        'May',
+        'Jun',
+        'Q2',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Q3',
+        'Oct',
+        'Nov',
+        'Dec',
+        'Q4',
+        'YTD',
       ],
     ];
-    for ($i = 0; $i < $rowsCount; $i++) {
-      $date = strval(intval(date('Y') - ($rowsCount - $i) + 1));
-      array_push($form['table'], \Drupal::service('FormAlter')->addRow($date));
+    $count = $form_state->getValue('count');
+    if (empty($count)) {
+      $count = 1;
+      $form_state->setValue('count', 1);
     }
-
+    for ($i = 0; $i < $count; $i++) {
+      $date = strval(intval(date('Y') - ($count - $i) + 1));
+      foreach ($row_names as $cell) {
+        if ($cell == 'year') {
+          $form['table'][$i][$cell] = [
+            '#name' => $cell,
+            '#plain_text' => $date,
+          ];
+        }
+        elseif (($cell == 'q1')||($cell == 'q2')||($cell == 'q3')||($cell == 'q4')||($cell == 'ytd')) {
+          $form['table'][$i][$cell] = [
+            '#name' => $cell,
+            '#plain_text' => '',
+          ];
+        }
+        else {
+          $form['table'][$i][$cell] = [
+            '#type' => 'textfield',
+            '#name' => $cell,
+          ];
+        }
+      }
+    }
     return $form;
   }
 
@@ -96,9 +112,9 @@ class LscorpForm extends FormBase {
    * Adds row to table.
    */
   public function addRowCallback(array &$form, FormStateInterface $form_state) {
-    $rowsCount = $form_state->get('rowsCount');
-    $rowsCount++;
-    $form_state->set('rowsCount', $rowsCount);
+    $count = $form_state->getValue('count');
+    $count++;
+    $form_state->setValue('count', $count);
     $values = $form_state->getValues();
     $form_state->setRebuild();
   }
@@ -124,8 +140,7 @@ class LscorpForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $values = $form_state->getValues();
-    $form_state->setValue('0', 2);
-    $this->messenger()->addStatus($this->t('Your phone number is @number', ['@number' => $form_state->getValue('phone_number')]));
+    echo('no');
   }
 
 }

@@ -19,23 +19,22 @@ class FormAlter {
     $row = [];
     foreach ($row_names as $item) {
       if ($item == 'year') {
-        array_push($row, [
+        $row[$item] = [
           '#name' => $item,
           '#plain_text' => $year,
-        ]);
+        ];
       }
       elseif (($item == 'q1')||($item == 'q2')||($item == 'q3')||($item == 'q4')||($item == 'ytd')) {
-        array_push($row, [
+        $row[$item] = [
           '#name' => $item,
           '#plain_text' => '',
-        ]);
+        ];
       }
       else {
-        $field = [
-          '#type' => 'number',
+        $row[$item] = [
+          '#type' => 'textfield',
           '#name' => $item,
         ];
-        array_push($row, $field);
       }
     }
     return $row;
