@@ -21,6 +21,7 @@ class LscorpForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state):array {
+    $form_alter = \Drupal::service('FormAlter');
     $row_names = ['year', 'jan', 'feb', 'mar', 'q1', 'arp', 'may', 'jun', 'q2', 'jul', 'aug',
       'sep', 'q3', 'oct', 'nov', 'dec', 'q4', 'ytd',
     ];
@@ -56,25 +57,8 @@ class LscorpForm extends FormBase {
     $form['table'] = [
       '#title' => 'LScorp Table',
       '#type' => 'table',
-      '#header' => [
-        'Year',
-        'Jan',
-        'Feb',
-        'Mar',
-        'Q1',
-        'Apr',
-        'May',
-        'Jun',
-        'Q2',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Q3',
-        'Oct',
-        'Nov',
-        'Dec',
-        'Q4',
-        'YTD',
+      '#header' => ['Year', 'Jan', 'Feb', 'Mar', 'Q1', 'Apr', 'May', 'Jun', 'Q2',
+        'Jul', 'Aug', 'Sep', 'Q3', 'Oct', 'Nov', 'Dec', 'Q4', 'YTD',
       ],
       '#attributes' => [
         'id' => 'lscorp',
@@ -86,31 +70,9 @@ class LscorpForm extends FormBase {
       $count = 1;
       $form_state->set('count', 1);
     }
-    for ($i = 0; $i < $count; $i++) {
-      $date = strval(intval(date('Y') - ($count - $i) + 1));
-      foreach ($row_names as $cell) {
-        if ($cell == 'year') {
-          $form['table'][$i][$cell] = [
-            '#title' => $cell,
-            '#plain_text' => $date,
-            '#title_display' => 'invisible',
-          ];
-        }
-        elseif (($cell == 'q1')||($cell == 'q2')||($cell == 'q3')||($cell == 'q4')||($cell == 'ytd')) {
-          $form['table'][$i][$cell] = [
-            '#title' => $cell,
-            '#plain_text' => '',
-            '#title_display' => 'invisible',
-          ];
-        }
-        else {
-          $form['table'][$i][$cell] = [
-            '#type' => 'textfield',
-            '#title' => $cell,
-            '#title_display' => 'invisible',
-          ];
-        }
-      }
+    for ($i = $count; $i > 0; $i--) {
+      $date = strval(intval(date('Y') - $i + 1));
+      $form['table'][$i] = $form_alter->addRow($date);
     }
     return $form;
   }
@@ -144,7 +106,6 @@ class LscorpForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $values = $form_state->getValue('table');
-    \Drupal::messenger()->addStatus('Hello, darkness, my old friend...');
   }
 
 }
