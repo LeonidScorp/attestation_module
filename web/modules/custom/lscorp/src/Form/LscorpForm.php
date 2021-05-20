@@ -76,6 +76,9 @@ class LscorpForm extends FormBase {
         'Q4',
         'YTD',
       ],
+      '#attributes' => [
+        '#id' => 'lscorp',
+      ],
     ];
     $count = $form_state->getValue('count');
     if (empty($count)) {
@@ -113,6 +116,10 @@ class LscorpForm extends FormBase {
    */
   public function addRowCallback(array &$form, FormStateInterface $form_state) {
     $count = $form_state->getValue('count');
+    if (empty($count)) {
+      $count = 1;
+      $form_state->setValue('count', 1);
+    }
     $count++;
     $form_state->setValue('count', $count);
     $values = $form_state->getValues();
