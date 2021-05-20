@@ -1,0 +1,39 @@
+bootstrap:
+  js:
+    /libraries/popper.js/dist/umd/popper.min.js: {}
+    /libraries/bootstrap/dist/js/bootstrap.min.js: {}
+  css:
+    component:
+      /libraries/bootstrap/dist/css/bootstrap.min.css: {}
+bootstrap_cdn:
+  js:
+    //cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js: {}
+    //stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js: {}
+  css:
+    component:
+      //stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css: {}
+color.preview:
+  version: VERSION
+  css:
+    theme:
+      color/preview.css: {}
+  js:
+    color/preview.js: {}
+  dependencies:
+    - color/drupal.color
+global-styling:
+  version: VERSION
+  js:
+    js/global.js: {}
+  css:
+    theme:
+      https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap: {}
+    component:
+      css/style.css: {}
+      css/colors.css: {}
+      css/footer.css: {}
+      css/header.css: {}
+      css/homepage/homepage.css: {}
+      css/contact.css: {}
+      css/pages.css: {}
+

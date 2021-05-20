@@ -1,0 +1,113 @@
+@import "../mixin";
+.block-views-blockprojects-block-1 {
+  margin-top: 120px;
+  & > h2 {
+    @include lined_header;
+  }
+
+  text-transform: uppercase;
+  text-align: center;
+  h2 {
+    font-weight: lighter;
+    margin-bottom: 40px;
+  }
+  .content {
+    .view-content {
+      width: 100%;
+      justify-content: center;
+      margin: 0;
+    }
+    background-image: linear-gradient(135deg, #cacaca 8.33%, #fefefe 8.33%, #fefefe 50%, #cacaca 50%, #cacaca 58.33%, #fefefe 58.33%, #fefefe 100%);
+    background-size: 8.49px 8.49px;
+    & > div {
+      width: 100%;
+      margin: 0 auto;
+    }
+    .col-lg-3 {
+      margin-top: 50px;
+    }
+    .views-row {
+      padding: 10px;
+      img {
+        width: 100%;
+        height: 100%;
+      }
+      .views-field-field-image {
+        margin-bottom: 20px;
+      }
+      .views-field-title {
+        font-size: 24px;
+      }
+      .views-field-nothing {
+        background-color: #fff;
+        padding-bottom: 20px;
+        border-bottom: solid 2px #8E8B94;
+      }
+      .views-field-field-service-type {
+        display: block;
+        font-size: 14px;
+        margin: 0 auto 10px;
+        a {
+          text-decoration: none;
+          &[href="/taxonomy/term/1"] {
+            color: #00C79B;
+          }
+          &[href="/taxonomy/term/4"] {
+            color: #15A2E3;
+          }
+          &[href="/taxonomy/term/2"] {
+            color: #F42632;
+          }
+          &[href="/taxonomy/term/3"] {
+            color: #AA1BB8;
+          }
+        }
+
+      }
+      .views-field-view-node {
+        a {
+          color: #fff;
+          background-color: #3C3647;
+          font-size: 12px;
+          padding: 6px;
+          text-decoration: none;
+        }
+      }
+    }
+  }
+  .pagination {
+    margin: 40px 0 120px;
+    justify-content: center;
+    .pager__item--next, .pager__item--previous {
+      a {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: transparent;
+        padding: 0;
+        line-height: 30px;
+        border: none;
+        color: #818081;
+      }
+    }
+    .page-item {
+      &.active {
+        .page-link {
+          font-weight: bold;
+          background-color: #DCDBDC;
+          color: #818081;
+        }
+      }
+      .page-link {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: transparent;
+        padding: 0;
+        line-height: 30px;
+        border: none;
+        color: #818081;
+      }
+    }
+  }
+}

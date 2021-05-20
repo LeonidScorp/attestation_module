@@ -1,0 +1,28 @@
+@import "mixin";
+.view-full-search {
+  .views-field-title {
+    font-weight: bold;
+    margin: 20px auto 30px;
+    display: block;
+  }
+  .view-content {
+    flex-direction: column;
+  }
+}
+.path-projects, .path-news, .page-view-full-search, .path-clients, .path-team, .path-services, .path-node, .path-taxonomy {
+  .view-content {
+    flex-direction: column;
+  }
+  #navbar-main {
+    .container {
+      border: 1px solid #D5D5D5;
+    }
+  }
+  h1 {
+    @include lined_header;
+    text-align: center;
+    margin: 40px 0;
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+}

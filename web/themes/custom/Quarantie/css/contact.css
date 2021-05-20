@@ -1,0 +1,76 @@
+.path-contacts #navbar-main .container {
+  border: 1px solid #D5D5D5;
+}
+.path-contacts h1 {
+  text-transform: uppercase;
+  text-align: center;
+  font-weight: bold;
+  font-size: 35px;
+  position: relative;
+  margin-top: 40px;
+  margin-bottom: 120px;
+}
+.path-contacts h1:after {
+  content: " ";
+  position: absolute;
+  bottom: -5px;
+  left: calc(50% - 40px);
+  width: 80px;
+  height: 3px;
+  background-color: #C9C9C9;
+}
+.path-contacts .block-webform {
+  width: 49%;
+  float: left;
+}
+.path-contacts .block-webform input, .path-contacts .block-webform textarea {
+  height: 50px;
+  border-radius: 2px;
+}
+.path-contacts .block-webform input::placeholder, .path-contacts .block-webform textarea::placeholder {
+  text-transform: uppercase;
+}
+.path-contacts .block-webform textarea {
+  height: 190px;
+  resize: none;
+  margin-bottom: 20px;
+}
+.path-contacts .block-webform .webform-button--submit {
+  max-width: 180px;
+  text-transform: uppercase;
+  background-color: #EC0000;
+  border: none;
+  font-size: 15px;
+}
+.path-contacts #block-contactmap {
+  margin-left: 2%;
+  width: 49%;
+  display: inline-block;
+  margin-bottom: 200px;
+}
+.path-contacts #block-contactmap h5 {
+  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: bold;
+}
+.path-contacts #block-contactmap p {
+  font-size: 14px;
+  margin-bottom: 0;
+}
+.path-contacts #block-contactmap iframe {
+  width: 100%;
+  max-height: 260px;
+}
+
+@media (max-width: 1200px) {
+  .path-contacts .block-webform {
+    width: 100%;
+    float: none;
+  }
+  .path-contacts #block-contactmap {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+/*# sourceMappingURL=contact.css.map */
