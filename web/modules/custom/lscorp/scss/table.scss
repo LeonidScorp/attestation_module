@@ -1,8 +1,25 @@
 .lscorp-form {
-  td, input {
+  .table td, input {
     padding: 0;
   }
+  fieldset {
+    margin: 0;
+  }
+  input {
+    border-radius: 0;
+    text-align: center;
+  }
 }
-body {
-  display: none;
+.form-control.button {
+  width: min-content;
+  border-radius: 30px;
+  padding: 0 10px;
+  border: 0;
+}
+.valid {
+  background-color: #34FF82;
+}
+
+.invalid {
+  background-color: #FF0000;
 }

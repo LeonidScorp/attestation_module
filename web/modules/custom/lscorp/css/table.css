@@ -1,9 +1,27 @@
-.lscorp-form td, .lscorp-form input {
+.lscorp-form .table td, .lscorp-form input {
   padding: 0;
 }
+.lscorp-form fieldset {
+  margin: 0;
+}
+.lscorp-form input {
+  border-radius: 0;
+  text-align: center;
+}
 
-body {
-  display: none;
+.form-control.button {
+  width: min-content;
+  border-radius: 30px;
+  padding: 0 10px;
+  border: 0;
+}
+
+.valid {
+  background-color: #34FF82;
+}
+
+.invalid {
+  background-color: #FF0000;
 }
 
 /*# sourceMappingURL=table.css.map */

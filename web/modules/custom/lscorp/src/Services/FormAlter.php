@@ -21,20 +21,23 @@ class FormAlter {
       if ($item == 'year') {
         $row[$item] = [
           '#title' => $item,
-          '#plain_text' => $year,
+          '#value' => $year,
           '#title_display' => 'invisible',
+          '#type' => 'number',
+          '#disabled' => TRUE,
         ];
       }
       elseif (($item == 'q1')||($item == 'q2')||($item == 'q3')||($item == 'q4')||($item == 'ytd')) {
         $row[$item] = [
           '#title' => $item,
-          '#plain_text' => '',
           '#title_display' => 'invisible',
+          '#type' => 'number',
+          '#disabled' => TRUE,
         ];
       }
       else {
         $row[$item] = [
-          '#type' => 'textfield',
+          '#type' => 'number',
           '#title' => $item,
           '#title_display' => 'invisible',
         ];
