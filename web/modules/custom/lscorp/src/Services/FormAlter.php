@@ -31,7 +31,7 @@ class FormAlter {
         $row[$item] = [
           '#title' => $item,
           '#title_display' => 'invisible',
-          '#type' => 'number',
+          '#type' => 'textfield',
           '#disabled' => TRUE,
         ];
       }

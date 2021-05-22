@@ -25,6 +25,23 @@ class LscorpForm extends FormBase {
     $row_names = ['year', 'jan', 'feb', 'mar', 'q1', 'arp', 'may', 'jun', 'q2', 'jul', 'aug',
       'sep', 'q3', 'oct', 'nov', 'dec', 'q4', 'ytd',
     ];
+    $months = ['jan', 'feb', 'mar', 'arp', 'may', 'jun', 'jul', 'aug',
+      'sep', 'oct', 'nov', 'dec',
+    ];
+    $months_in_quartals = [
+      'q1' => [
+        'jan', 'feb', 'mar',
+      ],
+      'q2' => [
+        'arp', 'may', 'jun',
+      ],
+      'q3' => [
+        'jul', 'aug', 'sep',
+      ],
+      'q4' => [
+        'oct', 'nov', 'dec',
+      ],
+    ];
     $tables = $form_state->get('tables');
     if (empty($tables)) {
       $tables = 1;
@@ -70,6 +87,37 @@ class LscorpForm extends FormBase {
       for ($i = $count; $i > 0; $i--) {
         $date = strval(intval(date('Y') - $i + 1));
         $form['tables'][$j]['table'][$i] = $form_alter->addRow($date);
+        $month_values = [];
+        foreach ($months as $month) {
+          $month_values[$month] = $form_state->getValue(['tables', $j,
+            'table', $i, $month,
+          ]);
+        }
+        $q = [];
+        $ytd = 0;
+        foreach ($months_in_quartals as $quartal => $month_inside) {
+          $quartal_value = 0;
+          foreach ($month_inside as $month_name) {
+            $quartal_value = floatval($quartal_value) + floatval($month_values[$month_name]);
+          }
+          if ($quartal_value != 0) {
+            $q[$quartal] = round((($quartal_value + 1) / 3), 2);
+          }
+          else {
+            $q[$quartal] = '';
+          }
+        }
+        foreach ($q as $quartal_name => $quartal_value) {
+          $form['tables'][$j]['table'][$i][$quartal_name]['#value'] = $quartal_value;
+          $ytd = floatval($ytd) + floatval($quartal_value);
+        }
+        if ($ytd != 0) {
+          $ytd = round((($ytd + 1) / 4), 2);
+        }
+        else {
+          $ytd = '';
+        }
+        $form['tables'][$j]['table'][$i]['ytd']['#value'] = $ytd;
       }
     }
     $form['addTable'] = [
@@ -147,13 +195,13 @@ class LscorpForm extends FormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-
+    return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): bool {
     $messenger = \Drupal::messenger();
     $months = ['jan', 'feb', 'mar', 'arp', 'may', 'jun', 'jul', 'aug',
       'sep', 'oct', 'nov', 'dec',
@@ -181,7 +229,7 @@ class LscorpForm extends FormBase {
           }
         }
         if (!empty($first_input)) {
-//          $form_state->setValue(['tables', 0, 'table', 1, 'jan'], 1);
+          // To do.
         }
       }
       $count = count($values_row);
@@ -219,6 +267,7 @@ class LscorpForm extends FormBase {
     }
     if (!$errors) {
       $messenger->addStatus('Valid');
+      $form_state->setRebuild();
     }
     else {
       $messenger->addError('Invalid');
