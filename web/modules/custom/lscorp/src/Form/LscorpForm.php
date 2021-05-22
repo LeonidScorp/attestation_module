@@ -139,7 +139,7 @@ class LscorpForm extends FormBase {
   /**
    * Returns full new table.
    */
-  public function tableReturn(array &$form, FormStateInterface $form_tate) {
+  public function tableReturn(array &$form, FormStateInterface $form_state) {
     return $form['tables'];
   }
 
@@ -147,30 +147,83 @@ class LscorpForm extends FormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    $months = ['jan', 'feb', 'mar', 'arp', 'may', 'jun', 'jul', 'aug',
-      'sep', 'oct', 'nov', 'dec',
-    ];
-    $quartals = ['q1', 'q2', 'q3', 'q4'];
-    $i = 0;
-    $tables = $form_state->getValue('tables');
-    $first_input = '';
-    $last_input = '';
-    foreach ($tables as $table_key => $table) {
-      foreach ($table['table'] as $row_key => $row) {
-        foreach ($row as $cell_key => $value) {
-          if (in_array($cell_key, $months)) {
 
-          }
-        }
-      }
-    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-
+    $messenger = \Drupal::messenger();
+    $months = ['jan', 'feb', 'mar', 'arp', 'may', 'jun', 'jul', 'aug',
+      'sep', 'oct', 'nov', 'dec',
+    ];
+    $quartals = ['q1', 'q2', 'q3', 'q4'];
+    $i = 0;
+    $errors = FALSE;
+    $tables = $form_state->getValue('tables');
+    $table_count = $form_state->get('tables');
+    $first_input = [];
+    $last_input = [];
+    $row_count_array = [];
+    foreach ($tables as $table_key => $table) {
+      $values_row = [];
+      foreach ($table['table'] as $row_key => $row) {
+        foreach ($row as $cell_key => $cell) {
+          if (in_array($cell_key, $months)) {
+            if (empty($first_input[$table_key]) && !empty($cell)) {
+              $first_input[$table_key] = [$row_key, $cell_key];
+            }
+            if (!empty($cell)) {
+              $last_input[$table_key] = [$row_key, $cell_key];
+            }
+            array_push($values_row, $cell);
+          }
+        }
+        if (!empty($first_input)) {
+//          $form_state->setValue(['tables', 0, 'table', 1, 'jan'], 1);
+        }
+      }
+      $count = count($values_row);
+      for ($i = 0; $i < $count; $i++) {
+        if ($values_row[$i] === '') {
+          unset($values_row[$i]);
+        }
+        else {
+          break;
+        }
+      }
+      for ($i = $count - 1; $i >= 0; $i--) {
+        if ($values_row[$i] === '') {
+          unset($values_row[$i]);
+        }
+        else {
+          break;
+        }
+      }
+      if (in_array('', $values_row)) {
+        $errors = TRUE;
+      }
+    }
+    if ($table_count > 1) {
+      for ($i = 0; $i < $table_count; $i++) {
+        array_push($row_count_array, $form_state->get('count' . $i));
+      }
+      if (in_array(1, $row_count_array)) {
+        for ($i = 1; $i < $table_count; $i++) {
+          if (($first_input[0] != $first_input[$i]) || ($last_input[0] != $last_input[$i])) {
+            $errors = TRUE;
+          }
+        }
+      }
+    }
+    if (!$errors) {
+      $messenger->addStatus('Valid');
+    }
+    else {
+      $messenger->addError('Invalid');
+    }
+    return $errors;
   }
 
 }
