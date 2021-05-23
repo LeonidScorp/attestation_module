@@ -1,0 +1,51 @@
+.lscorp-form table {
+  table-layout: auto;
+  font-size: 14px;
+  max-width: 1260px;
+  width: 90vw;
+  border-collapse: collapse;
+}
+.lscorp-form table * {
+  box-sizing: border-box;
+}
+.lscorp-form table thead,
+.lscorp-form table tbody {
+  width: 100%;
+}
+.lscorp-form table input,
+.lscorp-form table textare {
+  font-size: 16px;
+  line-height: 20px;
+}
+.lscorp-form table td,
+.lscorp-form table th {
+  text-align: center;
+  max-width: 54px;
+  width: 5.5%;
+}
+.lscorp-form input::-webkit-outer-spin-button,
+.lscorp-form input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.lscorp-form table td,
+.lscorp-form table input {
+  padding: 0;
+  margin: 0;
+}
+.lscorp-form fieldset {
+  margin: 0;
+}
+.lscorp-form input {
+  border-radius: 0;
+  text-align: center;
+}
+
+.form-control.button {
+  width: min-content;
+  border-radius: 30px;
+  padding: 0 10px;
+  border: 0;
+}
+
+/*# sourceMappingURL=table.css.map */
