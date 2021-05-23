@@ -45,6 +45,8 @@ class LscorpForm extends FormBase {
    *
    * @param \Drupal\lscorp\Services\FormAlter $formAlterInterface
    *   Variable for FormAlter class.
+   * @param \Drupal\Core\Messenger\Messenger $messengerInterface
+   *   Variable for Messenger class.
    */
   public function __construct(FormAlter $formAlterInterface, Messenger $messengerInterface) {
     $this->formAlter = $formAlterInterface;
@@ -125,8 +127,6 @@ class LscorpForm extends FormBase {
         $date = strval(intval(date('Y') - $i + 1));
         $form['tables'][$j]['table'][$i] = $this->formAlter->addRow($date);
         $process = $form_state->getTriggeringElement()['#name'];
-//        $process = NULL;
-
         if ($process === 'op') {
           $month_values = [];
           foreach ($months as $month) {
