@@ -1,7 +1,7 @@
-lscorp.content:
+lscorp.lscorp_form:
   path: '/lscorp'
   defaults:
-    _controller: '\Drupal\lscorp\Controller\FormController::content'
-    _title: 'LScorp Module'
+    _form: 'Drupal\lscorp\Form\LscorpForm'
+    _title: 'LScorp Form'
   requirements:
     _permission: 'access content'

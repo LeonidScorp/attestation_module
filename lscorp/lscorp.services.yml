@@ -1,3 +1,0 @@
-services:
-  form_alter:
-    class: Drupal\lscorp\Services\FormAlter
