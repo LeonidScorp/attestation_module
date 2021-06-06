@@ -265,6 +265,7 @@ class LscorpForm extends FormBase {
     $table_count = count($tables);
     $first_input = [];
     $last_input = [];
+
     foreach ($tables as $table_key => $table) {
       $values_row = [];
       foreach ($table['table'] as $row_key => $row) {
@@ -280,6 +281,7 @@ class LscorpForm extends FormBase {
           }
         }
       }
+
       $values_row = array_filter($values_row);
       $count = count($values_row);
       if (((array_key_last($values_row) - array_key_first($values_row) + 1)
@@ -288,6 +290,7 @@ class LscorpForm extends FormBase {
         return FALSE;
       }
     }
+
     for ($i = 1; $i < $table_count; $i++) {
       if (
         ($first_input[0] != $first_input[$i])
@@ -297,6 +300,7 @@ class LscorpForm extends FormBase {
         return FALSE;
       }
     }
+
     $this->messenger->addStatus($this->t('Valid'));
     $form_state->setRebuild();
     return TRUE;
@@ -363,6 +367,7 @@ class LscorpForm extends FormBase {
     $month_values = [];
     $q = [];
     $ytd = 0;
+
     foreach (self::$months as $month) {
       $month_values[$month] = $form_state->getValue([
         'tables',
