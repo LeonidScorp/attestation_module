@@ -282,7 +282,12 @@ class LscorpForm extends FormBase {
         }
       }
 
-      $values_row = array_filter($values_row);
+      $values_row = array_filter(
+        $values_row,
+        function ($k) {
+          return $k !== '';
+        }
+      );
       $count = count($values_row);
       if (((array_key_last($values_row) - array_key_first($values_row) + 1)
           != $count) && ($count != 0)) {
