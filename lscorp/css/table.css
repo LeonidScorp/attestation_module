@@ -22,6 +22,9 @@
   max-width: 54px;
   width: 5.5%;
 }
+.lscorp-form input {
+  -moz-appearance: textfield;
+}
 .lscorp-form input::-webkit-outer-spin-button,
 .lscorp-form input::-webkit-inner-spin-button {
   -webkit-appearance: none;
