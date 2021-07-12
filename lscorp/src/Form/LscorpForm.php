@@ -12,35 +12,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class LscorpForm extends FormBase {
 
-//
-//  /**
-//   * Month in quartals array.
-//   *
-//   * @var \string[][]
-//   */
-//  protected static $monthsInQuartals = [
-//    'q1' => [
-//      'jan',
-//      'feb',
-//      'mar',
-//    ],
-//    'q2' => [
-//      'arp',
-//      'may',
-//      'jun',
-//    ],
-//    'q3' => [
-//      'jul',
-//      'aug',
-//      'sep',
-//    ],
-//    'q4' => [
-//      'oct',
-//      'nov',
-//      'dec',
-//    ],
-//  ];
-
   /**
    * Names for table row cells.
    *
@@ -101,22 +72,23 @@ class LscorpForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    //Get number of tables and rows from form state.
+    // Get number of tables and rows from form state.
     $tables = $form_state->get('tables');
     $tables = empty($tables) ? [0 => 1] : $tables;
 
-    //Get triggered button.
+    // Get triggered button.
     $triggered = $form_state->getTriggeringElement();
     $pressed_button = $triggered['#name'] ?? 'empty';
 
-    //Add row or table
+    // Add row or table.
     if (str_contains($pressed_button, 'lscorp_')) {
       $tables[$triggered['#attributes']['data-table']]++;
-    } elseif ($pressed_button === 'add-table') {
+    }
+    elseif ($pressed_button === 'add-table') {
       $tables[] = 1;
     }
 
-    //Save new values to form state.
+    // Save new values to form state.
     $form_state->set('tables', $tables);
     $table_count = count($tables);
 
@@ -124,7 +96,7 @@ class LscorpForm extends FormBase {
     $form['tables']['#suffix'] = '</div>';
     $form['tables']['#tree'] = TRUE;
 
-    //Create tables.
+    // Create tables.
     for ($j = 0; $j < $table_count; $j++) {
       $form['tables'][$j]['addRow'] = [
         '#type' => 'button',
@@ -145,7 +117,7 @@ class LscorpForm extends FormBase {
         ],
       ];
 
-      //Create basic table and it's header.
+      // Create basic table and it's header.
       $form['tables'][$j]['table'] = [
         '#type' => 'table',
         '#attributes' => [
@@ -155,7 +127,7 @@ class LscorpForm extends FormBase {
       ];
       $form['tables'][$j]['table']['#header'] = $this->addHeader();
 
-      //Add row into table.
+      // Add row into table.
       for ($i = $tables[$j]; $i > 0; $i--) {
         $date = (int) date('Y') - $i + 1;
         $form['tables'][$j]['table'][$i] = $this->addRow($date);
@@ -165,6 +137,7 @@ class LscorpForm extends FormBase {
       }
     }
 
+    // "Add table" button
     $form['addTable'] = [
       '#type' => 'button',
       '#value' => $this->t('Add Table'),
@@ -181,6 +154,7 @@ class LscorpForm extends FormBase {
       ],
     ];
 
+    // Submit button.
     $form['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Submit'),
@@ -238,14 +212,17 @@ class LscorpForm extends FormBase {
     $first_input = [];
     $last_input = [];
 
+    // Put values from table into a single line.
     foreach ($tables as $table_key => $table) {
       $values_row = [];
       foreach ($table['table'] as $row_key => $row) {
         foreach ($row as $cell_key => $cell) {
           if ($this->isMonth($cell_key)) {
+            // First value added to table.
             if (empty($first_input[$table_key]) && $cell !== '') {
               $first_input[$table_key] = [$row_key, $cell_key];
             }
+            // Last value added to table.
             if ($cell !== '') {
               $last_input[$table_key] = [$row_key, $cell_key];
             }
@@ -254,6 +231,7 @@ class LscorpForm extends FormBase {
         }
       }
 
+      // Remove empty values.
       $values_row = array_filter(
         $values_row,
         static function ($k) {
@@ -261,6 +239,8 @@ class LscorpForm extends FormBase {
         }
       );
       $count = count($values_row);
+
+      // Return error, if there are empty spaces.
       if (
         ($count !== 0)
         && ((array_key_last($values_row) - array_key_first($values_row) + 1)
@@ -268,6 +248,8 @@ class LscorpForm extends FormBase {
         $this->messenger->addError($this->t('Invalid'));
         return;
       }
+
+      // Return error, if data in tables for different periods.
       if (
         ($first_input[0] !== $first_input[$table_key])
         || ($last_input[0] !== $last_input[$table_key])
@@ -294,6 +276,7 @@ class LscorpForm extends FormBase {
     $row = [];
     foreach (self::$rowCellKeys as $cell) {
       $item = strtolower($cell);
+      // Add cells for not months.
       if (!$this->isMonth($cell)) {
         $row[$item] = [
           '#title' => $item,
@@ -303,6 +286,8 @@ class LscorpForm extends FormBase {
           '#value' => $item === 'year' ? $year : '',
         ];
       }
+
+      // Add cells for months.
       else {
         $row[$item] = [
           '#type' => 'number',
@@ -333,6 +318,7 @@ class LscorpForm extends FormBase {
     array &$form,
     FormStateInterface $form_state
   ) {
+    // Variables initialization.
     $quartals = [];
     $row_values = [];
     $value = 0;
@@ -340,7 +326,7 @@ class LscorpForm extends FormBase {
     $ytd = 0;
     $i = 0;
 
-
+    // Get row values.
     foreach (self::$rowCellKeys as $month) {
       if (!$this->isMonth($month)) {
         continue;
@@ -355,50 +341,40 @@ class LscorpForm extends FormBase {
       ]);
     }
 
-//    foreach (self::$monthsInQuartals as $quartal => $month_inside) {
-//      $quartal_value = 0;
-//      foreach ($month_inside as $month_name) {
-//        $quartal_value = (float) $quartal_value +
-//          (float) $month_values[$month_name];
-//      }
-//      if ($quartal_value !== 0) {
-//        $q[$quartal] = round((($quartal_value + 1) / 3), 2);
-//      }
-//      else {
-//        $q[$quartal] = '';
-//      }
-//    }
-
+    // Calculate quartal values.
     foreach ($row_values as $cell) {
       $value += (float) $cell;
       $i++;
       if ($i === 3) {
-        $quartals['q'.$quartal_number] = $value == 0 ? ''
+        $quartals['q' . $quartal_number] = $value == 0 ? ''
           : round((($value + 1) / 3), 2);
         $quartal_number++;
         $i = 0;
         $value = 0;
       }
-
     }
 
+    // Enter quartal values into form.
     foreach ($quartals as $quartal_name => $quartal_value) {
       $form['tables'][$table]['table'][$row][$quartal_name]['#value'] =
         $quartal_value;
 
+      // Calculate YTD value.
       $ytd = (float) $ytd + (float) $quartal_value;
     }
-    if ($ytd != 0) {
-      $ytd = round((($ytd + 1) / 4), 2);
-    }
-    else {
-      $ytd = '';
-    }
+    $ytd = $ytd != 0 ? round((($ytd + 1) / 4), 2) : '';
 
+    // Enter YTD value to form.
     $form['tables'][$table]['table'][$row]['ytd']['#value'] = $ytd;
   }
 
-  public function addHeader() {
+  /**
+   * Creates header for table.
+   *
+   * @return array
+   *   Header of a table.
+   */
+  public function addHeader():array {
     $header = [];
 
     foreach (self::$rowCellKeys as $cell) {
@@ -407,7 +383,16 @@ class LscorpForm extends FormBase {
     return $header;
   }
 
-  public function isMonth($item) {
+  /**
+   * Checks if the value is month from static array.
+   *
+   * @param string $item
+   *   Item to process.
+   *
+   * @return bool
+   *   Is month or not.
+   */
+  public function isMonth(string $item):bool {
     $item = strtolower($item);
     return !($item === 'ytd'
       || $item === 'q1'
@@ -416,4 +401,5 @@ class LscorpForm extends FormBase {
       || $item === 'q4'
       || $item === 'year');
   }
+
 }
