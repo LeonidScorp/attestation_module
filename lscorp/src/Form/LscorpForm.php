@@ -373,7 +373,7 @@ class LscorpForm extends FormBase {
       $value += (float) $cell;
       $i++;
       if ($i === 3) {
-        $quartals['q'.$quartal_number] = $value !== 0 ? 0
+        $quartals['q'.$quartal_number] = $value == 0 ? ''
           : round((($value + 1) / 3), 2);
         $quartal_number++;
         $i = 0;
