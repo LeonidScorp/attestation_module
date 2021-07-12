@@ -235,7 +235,6 @@ class LscorpForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $tables = $form_state->getValue('tables');
-    $table_count = count($tables);
     $first_input = [];
     $last_input = [];
 
@@ -257,13 +256,15 @@ class LscorpForm extends FormBase {
 
       $values_row = array_filter(
         $values_row,
-        function ($k) {
+        static function ($k) {
           return $k !== '';
         }
       );
       $count = count($values_row);
-      if (((array_key_last($values_row) - array_key_first($values_row) + 1)
-          !== $count) && ($count !== 0)) {
+      if (
+        ($count !== 0)
+        && ((array_key_last($values_row) - array_key_first($values_row) + 1)
+          !== $count)) {
         $this->messenger->addError($this->t('Invalid'));
         return;
       }
@@ -332,16 +333,20 @@ class LscorpForm extends FormBase {
     array &$form,
     FormStateInterface $form_state
   ) {
-    $month_values = [];
-    $q = [];
+    $quartals = [];
+    $row_values = [];
+    $value = 0;
+    $quartal_number = 1;
     $ytd = 0;
+    $i = 0;
+
 
     foreach (self::$rowCellKeys as $month) {
       if (!$this->isMonth($month)) {
         continue;
       }
       $month = strtolower($month);
-      $month_values[$month] = $form_state->getValue([
+      $row_values[] = $form_state->getValue([
         'tables',
         $table,
         'table',
@@ -364,7 +369,20 @@ class LscorpForm extends FormBase {
 //      }
 //    }
 
-    foreach ($q as $quartal_name => $quartal_value) {
+    foreach ($row_values as $cell) {
+      $value += (float) $cell;
+      $i++;
+      if ($i === 3) {
+        $quartals['q'.$quartal_number] = $value !== 0 ? 0
+          : round((($value + 1) / 3), 2);
+        $quartal_number++;
+        $i = 0;
+        $value = 0;
+      }
+
+    }
+
+    foreach ($quartals as $quartal_name => $quartal_value) {
       $form['tables'][$table]['table'][$row][$quartal_name]['#value'] =
         $quartal_value;
 
