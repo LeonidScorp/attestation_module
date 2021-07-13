@@ -195,7 +195,7 @@ class LscorpForm extends FormBase {
    *
    * @param array $form
    *   Current form.
-   *  @param \Drupal\Core\Form\FormStateInterface $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Current form state.
    *
    * @return array
