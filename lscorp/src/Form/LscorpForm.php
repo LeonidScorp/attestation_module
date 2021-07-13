@@ -8,7 +8,7 @@ use Drupal\Core\Messenger\Messenger;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Implements form.
+ * Form contains tables and validation logic.
  */
 class LscorpForm extends FormBase {
 
@@ -73,18 +73,17 @@ class LscorpForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     // Get number of tables and rows from form state.
-    $tables = $form_state->get('tables');
-    $tables = empty($tables) ? [0 => 1] : $tables;
+    $tables = $form_state->get('tables') ?? [1];
 
     // Get triggered button.
     $triggered = $form_state->getTriggeringElement();
-    $pressed_button = $triggered['#name'] ?? 'empty';
+    $triggered_name = $triggered['#name'] ?? 'empty';
 
     // Add row or table.
-    if (str_contains($pressed_button, 'lscorp_')) {
+    if (str_contains($triggered_name, 'lscorp_')) {
       $tables[$triggered['#attributes']['data-table']]++;
     }
-    elseif ($pressed_button === 'add-table') {
+    elseif ($triggered_name === 'add-table') {
       $tables[] = 1;
     }
 
@@ -92,13 +91,13 @@ class LscorpForm extends FormBase {
     $form_state->set('tables', $tables);
     $table_count = count($tables);
 
-    $form['tables']['#prefix'] = '<div class = "single_table" id="lscorp-tables">';
+    $form['tables']['#prefix'] = '<div id="lscorp-tables">';
     $form['tables']['#suffix'] = '</div>';
     $form['tables']['#tree'] = TRUE;
 
     // Create tables.
     for ($j = 0; $j < $table_count; $j++) {
-      $form['tables'][$j]['addRow'] = [
+      $form['tables'][$j]['add_row'] = [
         '#type' => 'button',
         '#value' => $this->t('Add Row'),
         '#name' => 'lscorp_' . $j,
@@ -131,14 +130,14 @@ class LscorpForm extends FormBase {
       for ($i = $tables[$j]; $i > 0; $i--) {
         $date = (int) date('Y') - $i + 1;
         $form['tables'][$j]['table'][$i] = $this->addRow($date);
-        if ($pressed_button === 'op') {
+        if ($triggered_name === 'op') {
           $this->calculateValues($j, $i, $form, $form_state);
         }
       }
     }
 
     // "Add table" button
-    $form['addTable'] = [
+    $form['add_table'] = [
       '#type' => 'button',
       '#value' => $this->t('Add Table'),
       '#name' => 'add-table',
@@ -176,7 +175,7 @@ class LscorpForm extends FormBase {
   }
 
   /**
-   * Returns form via ajax.
+   * Returns form table via ajax.
    *
    * @param array $form
    *   Current form.
@@ -186,7 +185,7 @@ class LscorpForm extends FormBase {
    * @return array
    *   Table with changed number of rows.
    */
-  public function formReturn(array &$form, FormStateInterface $form_state):array {
+  public function formReturn(array &$form, FormStateInterface $form_state): array {
     $table = $form_state->getTriggeringElement()['#attributes']['data-table'];
     return $form['tables'][$table]['table'];
   }
@@ -196,11 +195,13 @@ class LscorpForm extends FormBase {
    *
    * @param array $form
    *   Current form.
+   *  @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current form state.
    *
-   * @return mixed
+   * @return array
    *   All tables.
    */
-  public function tableReturn(array &$form) {
+  public function tableReturn(array &$form, FormStateInterface $form_state): array {
     return $form['tables'];
   }
 
@@ -244,7 +245,8 @@ class LscorpForm extends FormBase {
       if (
         ($count !== 0)
         && ((array_key_last($values_row) - array_key_first($values_row) + 1)
-          !== $count)) {
+          !== $count)
+      ) {
         $this->messenger->addError($this->t('Invalid'));
         return;
       }
@@ -274,6 +276,7 @@ class LscorpForm extends FormBase {
    */
   public function addRow(int $year): array {
     $row = [];
+
     foreach (self::$rowCellKeys as $cell) {
       $item = strtolower($cell);
       // Add cells for not months.
@@ -286,9 +289,8 @@ class LscorpForm extends FormBase {
           '#value' => $item === 'year' ? $year : '',
         ];
       }
-
-      // Add cells for months.
       else {
+        // Add cells for months.
         $row[$item] = [
           '#type' => 'number',
           '#title' => $item,
@@ -296,8 +298,8 @@ class LscorpForm extends FormBase {
         ];
       }
     }
-    return $row;
 
+    return $row;
   }
 
   /**
@@ -317,7 +319,7 @@ class LscorpForm extends FormBase {
     int $row,
     array &$form,
     FormStateInterface $form_state
-  ) {
+  ): void {
     // Variables initialization.
     $quartals = [];
     $row_values = [];
@@ -346,8 +348,10 @@ class LscorpForm extends FormBase {
       $value += (float) $cell;
       $i++;
       if ($i === 3) {
-        $quartals['q' . $quartal_number] = $value == 0 ? ''
-          : round((($value + 1) / 3), 2);
+        // Zero can be type of int or float.
+        $quartals['q' . $quartal_number] = $value != 0
+          ? round((($value + 1) / 3), 2)
+          : '';
         $quartal_number++;
         $i = 0;
         $value = 0;
@@ -356,12 +360,13 @@ class LscorpForm extends FormBase {
 
     // Enter quartal values into form.
     foreach ($quartals as $quartal_name => $quartal_value) {
-      $form['tables'][$table]['table'][$row][$quartal_name]['#value'] =
-        $quartal_value;
+      $form['tables'][$table]['table'][$row][$quartal_name]['#value'] = $quartal_value;
 
       // Calculate YTD value.
       $ytd = (float) $ytd + (float) $quartal_value;
     }
+
+    // Zero can be type of int or float.
     $ytd = $ytd != 0 ? round((($ytd + 1) / 4), 2) : '';
 
     // Enter YTD value to form.
